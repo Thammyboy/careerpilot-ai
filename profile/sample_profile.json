@@ -1,0 +1,66 @@
+{
+  "contact": {
+    "full_name": "Somchai Techaprasert",
+    "email": "somchai.dev@example.com",
+    "phone": "+66 81 234 5678",
+    "location": "Bangkok, Thailand",
+    "linkedin_url": "https://linkedin.com/in/somchai-tech",
+    "github_url": "https://github.com/somchai-tech",
+    "portfolio_url": "https://somchai.dev"
+  },
+  "target_job_titles": [
+    "Senior Software Engineer",
+    "Lead Backend Engineer",
+    "Full Stack Tech Lead",
+    "Staff Software Engineer"
+  ],
+  "preferred_locations": [
+    "Bangkok",
+    "Hybrid",
+    "Remote"
+  ],
+  "years_of_experience": 8.5,
+  "notice_period": "30 days",
+  "work_authorization": "Thai Citizen",
+  "compensation": {
+    "currency": "THB",
+    "min_monthly_thb": 130000,
+    "target_monthly_thb": 170000,
+    "min_annual_usd": 45000,
+    "target_annual_usd": 60000,
+    "negotiable": true
+  },
+  "languages": [
+    {
+      "language": "Thai",
+      "proficiency": "Native"
+    },
+    {
+      "language": "English",
+      "proficiency": "Fluent",
+      "test_score": "TOEIC 920"
+    }
+  ],
+  "core_skills": [
+    "Python",
+    "TypeScript",
+    "FastAPI",
+    "Node.js",
+    "React",
+    "PostgreSQL",
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Microservices Architecture"
+  ],
+  "secondary_skills": [
+    "Go",
+    "GraphQL",
+    "Redis",
+    "Kafka",
+    "Terraform",
+    "CI/CD Pipelines",
+    "Prompt Engineering"
+  ],
+  "professional_summary": "Senior Software Engineer and Technical Lead with 8+ years building high-concurrency microservices, cloud-native backends, and full-stack web applications across FinTech and E-Commerce in Southeast Asia."
+}

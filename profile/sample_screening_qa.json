@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "id": "leadership_style",
+      "category": "leadership",
+      "question": "What is your leadership and management style when leading engineering teams?",
+      "answer": "My leadership style is servant and context-driven. I focus on setting clear architectural guardrails and business objectives while giving engineers autonomy on execution. I run weekly 1-on-1s for unblocking and growth, conduct blameless post-mortems to foster psychological safety, and advocate for engineering health through continuous refactoring cycles alongside product delivery.",
+      "keywords": ["leadership", "management", "team lead", "mentorship", "style", "1-on-1", "autonomy"]
+    },
+    {
+      "id": "system_design_scaling",
+      "category": "architecture",
+      "question": "Describe a challenging system design problem you solved and how you scaled it.",
+      "answer": "At SiamFin, our payment reconciliation was taking 4+ hours due to batch DB locking. I redesigned the pipeline into an event-driven architecture using Apache Kafka and FastAPI workers with Redis idempotency keys. This decoupled transaction ingestion from settlement verification, handling 3.5M daily transactions in near-real-time (<30s lag) with zero data loss or double processing.",
+      "keywords": ["system design", "scaling", "architecture", "distributed systems", "kafka", "concurrency", "performance"]
+    },
+    {
+      "id": "notice_period_availability",
+      "category": "availability",
+      "question": "What is your notice period and when can you start?",
+      "answer": "My standard notice period is 30 calendar days from the date an official offer is signed. All handover materials and documentation are kept up-to-date to ensure a smooth transition.",
+      "keywords": ["notice period", "availability", "start date", "when can you start"]
+    },
+    {
+      "id": "salary_expectations",
+      "category": "compensation",
+      "question": "What are your salary expectations for this role?",
+      "answer": "My target compensation is 150,000 to 170,000 THB per month, open to negotiation depending on the total package, health benefits, annual bonus structure, and remote work flexibility.",
+      "keywords": ["salary", "compensation", "expectation", "package", "remuneration", "base salary"]
+    },
+    {
+      "id": "conflict_resolution",
+      "category": "teamwork",
+      "question": "How do you handle technical disagreements or conflicts with peers or product managers?",
+      "answer": "I ground technical debates in empirical data and user impact rather than ego. When disagreeing on architecture, I write a lightweight RFC highlighting tradeoffs, benchmarks, and maintenance cost. For product-engineering misalignments, I clarify the core business constraint and propose iterative compromises (e.g., shipping a minimal viable feature first, then hardening under load).",
+      "keywords": ["conflict", "disagreement", "teamwork", "product manager", "compromise", "debate"]
+    }
+  ]
+}
