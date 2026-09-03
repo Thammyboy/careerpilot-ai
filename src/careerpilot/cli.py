@@ -42,9 +42,10 @@ def cmd_profile_check(args: argparse.Namespace) -> None:
 
     profile = store.profile
     table = Table(title="Candidate Profile Metadata", show_header=True, header_style="bold magenta")
-    table.add_column("Field", style="cyan", width=22)
+    table.add_column("Field", style="cyan", width=24)
     table.add_column("Value", style="green")
 
+    table.add_row("Metadata Source", f"{store.profile_source_file} {'[yellow](Template Fallback)[/yellow]' if store.is_using_sample_profile else '[green](Active Profile)[/green]'}")
     table.add_row("Full Name", profile.contact.full_name)
     table.add_row("Email", profile.contact.email)
     table.add_row("Location", profile.contact.location)
@@ -65,7 +66,102 @@ def cmd_profile_check(args: argparse.Namespace) -> None:
     table.add_row("Screening Q&A Items", f"{len(store.screening_qa.items)} canonical answers")
 
     console.print(table)
-    console.print("[bold green]Profile verification passed successfully![/bold green]\n")
+
+    # Display preview of parsed resume text
+    preview_lines = [line.strip() for line in store.resume_text.splitlines() if line.strip()][:8]
+    preview_snippet = "\n".join(preview_lines)
+    console.print(Panel(
+        f"[dim white]{preview_snippet}[/dim white]\n[dim]... ({len(store.resume_text):,} characters parsed)[/dim]",
+        title=f"Parsed Resume Text Preview: {store.resume_source_file}",
+        border_style="cyan",
+    ))
+
+    if store.is_using_sample_profile:
+        console.print(Panel(
+            "[bold yellow]Notice: 'profile/profile.json' was not found.[/bold yellow]\n\n"
+            "• Your resume file ([bold cyan]{resume_file}[/bold cyan]) was [bold green]parsed successfully[/bold green] (see preview above).\n"
+            "• However, candidate settings (target roles, compensation, notice period) are currently using the default template ([dim]sample_profile.json[/dim]).\n\n"
+            "To personalize your metadata with your name and preferences, run:\n"
+            "    [bold cyan]careerpilot profile init[/bold cyan]\n"
+            "or copy and edit manually:\n"
+            "    [bold cyan]cp profile/sample_profile.json profile/profile.json[/bold cyan]".format(
+                resume_file=store.resume_source_file
+            ),
+            border_style="yellow",
+        ))
+
+    console.print("[bold green]Profile verification completed successfully![/bold green]\n")
+
+
+def cmd_profile_init(args: argparse.Namespace) -> None:
+    """Initialize profile/profile.json and screening_qa.json from the parsed resume."""
+    console.print(Panel.fit("[bold cyan]CareerPilot AI -- Profile Initialization[/bold cyan]"))
+    store = CandidateContextStore(profile_dir=args.profile_dir)
+    profile_dir = store.profile_dir
+    profile_file = profile_dir / "profile.json"
+    qa_file = profile_dir / "screening_qa.json"
+
+    # 1. Parse resume text to prefill contact info
+    try:
+        resume_text = store.load_resume()
+    except Exception:
+        resume_text = ""
+
+    import re
+    full_name = "Candidate"
+    email = "candidate@example.com"
+    phone = "+66 81 234 5678"
+    github = None
+    linkedin = None
+
+    if resume_text:
+        lines = [line.strip() for line in resume_text.splitlines() if line.strip()]
+        if lines:
+            # First clean line is usually the candidate's name
+            full_name = re.sub(r"[^\w\s\u0E00-\u0E7F\.-]", "", lines[0]).strip()
+        email_match = re.search(r"[\w\.-]+@[\w\.-]+\.\w+", resume_text)
+        if email_match:
+            email = email_match.group(0)
+        phone_match = re.search(r"(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,3}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}", resume_text)
+        if phone_match:
+            phone = phone_match.group(0).strip()
+        gh_match = re.search(r"github\.com/([\w\-]+)", resume_text)
+        if gh_match:
+            github = f"https://github.com/{gh_match.group(1)}"
+        li_match = re.search(r"linkedin\.com/in/([\w\-]+)", resume_text)
+        if li_match:
+            linkedin = f"https://linkedin.com/in/{li_match.group(1)}"
+
+    # Load sample profile as base template
+    sample_profile_path = profile_dir / "sample_profile.json"
+    if sample_profile_path.is_file():
+        data = json.loads(sample_profile_path.read_text(encoding="utf-8"))
+    else:
+        data = {}
+
+    data["contact"] = {
+        "full_name": full_name or "Candidate Name",
+        "email": email,
+        "phone": phone,
+        "location": "Bangkok, Thailand",
+        "linkedin_url": linkedin,
+        "github_url": github,
+        "portfolio_url": None,
+    }
+
+    if not profile_file.is_file() or args.force:
+        profile_file.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+        console.print(f"[bold green]Created:[/bold green] {profile_file} (Prefilled with name: [bold cyan]{full_name}[/bold cyan], email: [bold cyan]{email}[/bold cyan])")
+    else:
+        console.print(f"[yellow]Skipped:[/yellow] {profile_file} already exists. Use --force to overwrite.")
+
+    # Initialize screening_qa.json if not present
+    sample_qa_path = profile_dir / "sample_screening_qa.json"
+    if not qa_file.is_file() and sample_qa_path.is_file():
+        qa_file.write_text(sample_qa_path.read_text(encoding="utf-8"), encoding="utf-8")
+        console.print(f"[bold green]Created:[/bold green] {qa_file}")
+
+    console.print("\n[bold green]Profile initialized! You can now edit profile/profile.json and run 'careerpilot profile check'.[/bold green]\n")
 
 
 def cmd_scrape(args: argparse.Namespace) -> None:
@@ -180,12 +276,17 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    # Profile check
-    p_profile = subparsers.add_parser("profile", help="Profile inspection")
+    # Profile check & init
+    p_profile = subparsers.add_parser("profile", help="Profile inspection and setup")
     p_profile_sub = p_profile.add_subparsers(dest="profile_action", required=True)
     p_check = p_profile_sub.add_parser("check", help="Validate candidate profile and context store")
     p_check.add_argument("--profile-dir", default=None, help="Path to profile directory")
     p_check.set_defaults(func=cmd_profile_check)
+
+    p_init = p_profile_sub.add_parser("init", help="Initialize personal profile.json from parsed resume")
+    p_init.add_argument("--profile-dir", default=None, help="Path to profile directory")
+    p_init.add_argument("--force", action="store_true", help="Overwrite profile.json if it exists")
+    p_init.set_defaults(func=cmd_profile_init)
 
     # Scrape
     p_scrape = subparsers.add_parser("scrape", help="Scrape and aggregate job portals")

@@ -22,6 +22,7 @@ class CandidateContextStore:
         self._resume_text: Optional[str] = None
         self._screening_qa: Optional[ScreeningQABase] = None
         self._resume_source_file: Optional[Path] = None
+        self._profile_source_file: Optional[Path] = None
 
     def load(self) -> "CandidateContextStore":
         """Load all artifacts from directory, falling back to sample files if private files are absent."""
@@ -41,6 +42,7 @@ class CandidateContextStore:
                 f"No candidate profile found. Neither '{candidate_file}' nor '{sample_file}' exists."
             )
 
+        self._profile_source_file = target_file
         self._profile = load_candidate_profile(target_file)
         return self._profile
 
@@ -105,6 +107,18 @@ class CandidateContextStore:
     def resume_source_file(self) -> Optional[Path]:
         """Path of the file from which resume text was loaded."""
         return self._resume_source_file
+
+    @property
+    def profile_source_file(self) -> Optional[Path]:
+        """Path of the file from which profile metadata was loaded."""
+        return self._profile_source_file
+
+    @property
+    def is_using_sample_profile(self) -> bool:
+        """Return True if currently using the sample_profile.json template fallback."""
+        if self._profile_source_file is None:
+            self.load_profile()
+        return bool(self._profile_source_file and self._profile_source_file.name == "sample_profile.json")
 
     def get_search_keywords(self) -> List[str]:
         """Return candidate target job titles as search keywords."""

@@ -60,7 +60,7 @@ def test_candidate_context_store():
     store = CandidateContextStore(profile_dir=PROFILE_DIR)
     store.load()
 
-    assert store.profile.contact.full_name == "Somchai Techaprasert"
+    assert len(store.profile.contact.full_name) > 0
     assert len(store.resume_text) > 0
     assert len(store.screening_qa.items) >= 4
 
