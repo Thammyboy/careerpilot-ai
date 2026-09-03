@@ -104,22 +104,40 @@ cp .env.example .env
 Fill in your `NOTION_API_KEY` and `NOTION_DATABASE_ID` if you want live sync to Notion.
 
 ### 5. Configure Candidate Profile
-Copy the sample templates to start:
+CareerPilot AI separates **unstructured resume text** (`profile/master_cv.pdf` or `profile/master_cv.md`) from **structured search metadata** (`profile/profile.json` — target roles, desired salary, notice period).
+
+#### Automatic Setup (Recommended):
+Place your resume PDF into the `profile/` folder as `master_cv.pdf`, then run:
+```bash
+careerpilot profile init
+```
+This automatically parses your resume, extracts your contact details (name, email, phone, social profiles), creates `profile/profile.json`, and sets up `profile/screening_qa.json`.
+
+#### Manual Setup:
+Alternatively, copy the sample templates to create your files manually:
 ```bash
 cp profile/sample_profile.json profile/profile.json
 cp profile/sample_screening_qa.json profile/screening_qa.json
 cp profile/sample_resume.md profile/master_cv.md
 ```
-*(Or drop your `master_cv.pdf` directly into `profile/`)*
 
 ---
 
 ## CLI Usage
 
 ### Check Candidate Profile
-Validate your resume text, metadata schema, and canonical screening questions:
+Inspect your active profile metadata, verify loaded screening Q&As, and view a live text preview of your parsed resume:
 ```bash
 careerpilot profile check
+```
+
+### Initialize Profile from Resume
+Automatically extract contact info from `profile/master_cv.pdf` or `profile/master_cv.md` to initialize `profile/profile.json`:
+```bash
+careerpilot profile init
+
+# Use --force to overwrite an existing profile.json
+careerpilot profile init --force
 ```
 
 ### Run Scrapers
