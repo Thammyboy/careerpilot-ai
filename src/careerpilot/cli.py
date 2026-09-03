@@ -226,6 +226,9 @@ def cmd_sync(args: argparse.Namespace) -> None:
     jobs = [JobPosting.model_validate(item) for item in raw_data]
 
     pipeline = NotionSyncPipeline()
+    if not args.dry_run and pipeline.client.is_configured:
+        if pipeline.client.is_database_empty():
+            console.print("[bold yellow]Empty Notion database detected. Auto-configuring CareerPilot schema...[/bold yellow]")
     synced, skipped, errors = pipeline.sync(jobs, dry_run=args.dry_run)
 
     console.print(
@@ -260,6 +263,9 @@ def cmd_run(args: argparse.Namespace) -> None:
 
     # 3. Notion Sync
     pipeline = NotionSyncPipeline()
+    if not args.dry_run and pipeline.client.is_configured:
+        if pipeline.client.is_database_empty():
+            console.print("[bold yellow]Empty Notion database detected. Auto-configuring CareerPilot schema...[/bold yellow]")
     synced, skipped, errors = pipeline.sync(unique_jobs, dry_run=args.dry_run)
 
     console.print(

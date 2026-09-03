@@ -59,6 +59,7 @@ CareerPilot AI is an engineered career workflow automation engine designed to re
 
 4. **Notion Database Integration**:
    - Conforms to the 11-field PRD database schema (`Job Title`, `Company / Client`, `Source Channel`, `Agency Reference ID`, `Match Score`, `Location`, `Salary Range`, `Posting URL`, `Review Decision`, `Application Stage`, page body blocks).
+   - Automatic schema detection & provisioning for empty Notion databases.
    - Duplicate prevention by checking existing URLs in Notion.
    - Safe `--dry-run` mode for local preview without requiring API keys.
 
@@ -102,6 +103,13 @@ Copy the example environment file:
 cp .env.example .env
 ```
 Fill in your `NOTION_API_KEY` and `NOTION_DATABASE_ID` if you want live sync to Notion.
+
+> [!IMPORTANT]
+> **Notion Database Requirements:**
+> - **Use a brand-new, empty Notion database.** Create a new database in Notion and copy its Database ID into `NOTION_DATABASE_ID`.
+> - **Do NOT use an already filled database** or one with pre-existing custom columns. Notion enforces strict schema validation and will reject page creation if property names or types differ from what the pipeline expects.
+> - **Automatic Schema Provisioning:** CareerPilot AI automatically detects when the database is empty and configures all required columns (`Job Title`, `Company / Client`, `Source Channel`, `Posting URL`, `Location`, `Salary Range`, `Agency Reference ID`, `Match Score`, `Review Decision`, and `Application Stage`).
+> - **Share with Integration:** Remember to invite/connect your Notion Integration to the new database in Notion (click `•••` -> `Connections` -> add your integration).
 
 ### 5. Configure Candidate Profile
 CareerPilot AI separates **unstructured resume text** (`profile/master_cv.pdf` or `profile/master_cv.md`) from **structured search metadata** (`profile/profile.json` — target roles, desired salary, notice period).

@@ -116,6 +116,12 @@ class NotionSyncPipeline:
 
         existing_urls = set()
         if not dry_run:
+            schema_ok = self.client.ensure_schema()
+            if not schema_ok:
+                logger.warning(
+                    "Notion schema check/auto-configuration could not be completed. "
+                    "Sync will proceed, but may fail if properties are missing."
+                )
             existing_urls = self.client.query_existing_urls()
             logger.info("Retrieved %d existing URLs from Notion database.", len(existing_urls))
 

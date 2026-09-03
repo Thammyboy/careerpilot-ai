@@ -105,3 +105,92 @@ def test_notion_sync_pipeline_dry_run():
     assert synced == 2
     assert skipped == 0
     assert errors == 0
+
+
+from unittest.mock import MagicMock
+from careerpilot.notion.client import NotionClientWrapper
+
+
+def test_notion_is_database_empty():
+    mock_client = MagicMock()
+    # Case 1: Empty database with only default 'Name' property and 0 rows
+    mock_client.databases.retrieve.return_value = {
+        "properties": {
+            "Name": {"id": "title", "type": "title", "name": "Name"}
+        }
+    }
+    mock_client.databases.query.return_value = {"results": []}
+
+    wrapper = NotionClientWrapper(api_key="test_key", database_id="test_db", client=mock_client)
+    assert wrapper.is_database_empty() is True
+
+    # Case 2: Database has existing records
+    mock_client.databases.query.return_value = {"results": [{"id": "page_1"}]}
+    assert wrapper.is_database_empty() is False
+
+    # Case 3: Database has 0 records but already has CareerPilot schema configured
+    mock_client.databases.query.return_value = {"results": []}
+    mock_client.databases.retrieve.return_value = {
+        "properties": {
+            "Job Title": {"type": "title"},
+            "Posting URL": {"type": "url"},
+            "Source Channel": {"type": "select"},
+        }
+    }
+    assert wrapper.is_database_empty() is False
+
+    # Case 4: notion-client version where databases has no 'query' attribute (falls back to client.request)
+    mock_client_no_query = MagicMock(spec=["request", "databases"])
+    mock_client_no_query.databases = MagicMock(spec=["retrieve", "update"])
+    mock_client_no_query.databases.retrieve.return_value = {
+        "properties": {"Name": {"type": "title"}}
+    }
+    mock_client_no_query.request.return_value = {"results": []}
+    wrapper_no_query = NotionClientWrapper(api_key="test_key", database_id="test_db", client=mock_client_no_query)
+    assert wrapper_no_query.is_database_empty() is True
+    mock_client_no_query.request.assert_called_once_with(
+        path="databases/test_db/query",
+        method="POST",
+        body={"page_size": 1},
+    )
+
+
+def test_notion_setup_database_schema():
+    mock_client = MagicMock()
+    mock_client.databases.retrieve.return_value = {
+        "properties": {
+            "Name": {"id": "title", "type": "title", "name": "Name"}
+        }
+    }
+    wrapper = NotionClientWrapper(api_key="test_key", database_id="test_db", client=mock_client)
+
+    success = wrapper.setup_database_schema()
+    assert success is True
+
+    mock_client.databases.update.assert_called_once()
+    call_kwargs = mock_client.databases.update.call_args.kwargs
+    assert call_kwargs["database_id"] == "test_db"
+    props = call_kwargs["properties"]
+
+    # Must rename default 'Name' column to 'Job Title'
+    assert props["Name"] == {"name": "Job Title"}
+    # Must contain essential CareerPilot columns
+    assert "Company / Client" in props
+    assert "Posting URL" in props
+    assert "Source Channel" in props
+    assert "Review Decision" in props
+    assert "Application Stage" in props
+
+
+def test_notion_ensure_schema_trigger():
+    mock_client = MagicMock()
+    mock_client.databases.retrieve.return_value = {
+        "properties": {
+            "Name": {"id": "title", "type": "title", "name": "Name"}
+        }
+    }
+    mock_client.databases.query.return_value = {"results": []}
+
+    wrapper = NotionClientWrapper(api_key="test_key", database_id="test_db", client=mock_client)
+    assert wrapper.ensure_schema() is True
+    mock_client.databases.update.assert_called_once()

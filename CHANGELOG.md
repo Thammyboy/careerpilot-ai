@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Notion Database Auto-Configuration**: Detects empty Notion databases (0 records with default single title property) and automatically provisions all required PRD columns (`Job Title`, `Company / Client`, `Source Channel`, `Posting URL`, `Location`, `Salary Range`, `Agency Reference ID`, `Match Score`, `Review Decision`, and `Application Stage`).
+- Unit tests for Notion empty check (`is_database_empty`), schema configuration (`setup_database_schema`), and auto-provision trigger (`ensure_schema`) in `tests/test_notion_sync.py`.
+
 ### Changed
+- Pinned Notion client API version explicitly to `2022-06-28` for stable database schema update operations across client environments.
+- Enhanced CLI `sync` and `run` commands to display live status notifications when an empty Notion database is detected and configured.
+
+### Fixed
+- Fixed `AttributeError: 'DatabasesEndpoint' object has no attribute 'query'` when using newer `notion-client` releases by implementing `_query_database` with backward and forward compatibility (falling back to direct `client.request` on `databases/{id}/query`).
+- Fixed schema provisioning on modern Notion databases containing `data_sources` by updating properties directly on the underlying data source (`data_sources.update`), resolving `ValidationError: Job Title is not a property that exists` on initial page creation.
+
+### Documentation
+- Updated `README.md` with explicit instructions to supply the Database ID of a brand-new, empty database and a caution against using pre-filled or schema-mismatched databases.
 - Refactored project positioning, PRD documentation, and guidelines to remove all "recruiter-friendly" phrasing in favor of standard production engineering terminology.
 
 ---
