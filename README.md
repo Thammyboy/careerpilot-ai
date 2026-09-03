@@ -69,29 +69,48 @@ CareerPilot AI is an engineered career workflow automation engine designed to re
 ### 1. Prerequisites
 - Python 3.11+ (Tested on Python 3.13)
 
-### 2. Install Dependencies
-```bash
-git clone https://github.com/Thammyboy/careerpilot-ai.git
-cd careerpilot-ai
+### 2. Create & Activate Virtual Environment
+Create an isolated Python virtual environment to manage dependencies cleanly:
 
-# Install package in editable mode with dev dependencies
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**Windows (Command Prompt):**
+```cmd
+python -m venv .venv
+.\.venv\Scripts\activate.bat
+```
+
+**macOS / Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+With the virtual environment activated, install the package in editable mode with development tooling:
+```bash
 pip install -e ".[dev]"
 ```
 
-### 3. Configure Environment
+### 4. Configure Environment
 Copy the example environment file:
 ```bash
 cp .env.example .env
 ```
 Fill in your `NOTION_API_KEY` and `NOTION_DATABASE_ID` if you want live sync to Notion.
 
-### 4. Configure Candidate Profile
+### 5. Configure Candidate Profile
 Copy the sample templates to start:
 ```bash
 cp profile/sample_profile.json profile/profile.json
 cp profile/sample_screening_qa.json profile/screening_qa.json
 cp profile/sample_resume.md profile/master_cv.md
 ```
+*(Or drop your `master_cv.pdf` directly into `profile/`)*
 
 ---
 
