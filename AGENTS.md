@@ -47,6 +47,6 @@ For every meaningful change:
    - Always run tests (`pytest -v`) using the virtual environment (`.venv`).
    - Ensure all automated tests pass before concluding tasks.
 
-3. **Recruiter-Friendly Philosophy (PRD Compliance)**:
+3. **Polite Automation Philosophy (PRD Compliance)**:
    - All scrapers must implement rate limiting with jitter (2.0s–6.5s) and exponential backoff.
    - Zero spam: human confirmation and deduplication are mandatory.

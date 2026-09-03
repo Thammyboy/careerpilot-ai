@@ -3,7 +3,7 @@
 > **Intelligent Job Intelligence & Application Copilot**  
 > *Target Markets: Thailand & Southeast Asia (English & Thai support)*
 
-CareerPilot AI is an engineered career workflow automation engine designed to replace brute-force spamming with high-signal, recruiter-friendly semantic discovery.
+CareerPilot AI is an engineered career workflow automation engine designed to replace brute-force spamming with high-signal semantic discovery.
 
 ---
 

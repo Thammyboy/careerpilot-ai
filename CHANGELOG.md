@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Refactored project positioning, PRD documentation, and guidelines to remove all "recruiter-friendly" phrasing in favor of standard production engineering terminology.
+
 ---
 
 ## [0.1.0] - 2026-09-03

@@ -3,7 +3,7 @@
 ## Project: CareerPilot AI – Intelligent Job Intelligence & Application Copilot
 **Target Markets:** Thailand & Regional Southeast Asia (English & Thai support)  
 **Document Version:** 2.0   
-**Product Positioning:** Recruiter-Friendly Career Workflow Automation & Semantic Opportunity Matching Engine
+**Product Positioning:** Intelligent Career Workflow Automation & Semantic Opportunity Matching Engine
 
 ---
 
@@ -22,7 +22,7 @@ High-performing professionals spend 15–20 hours weekly navigating fragmented r
 
 ---
 
-## 2. Core Value Pillars & Recruiter-Friendly Design
+## 2. Core Value Pillars & Design Principles
 
 | Pillar | Principle | Recruiter Benefit | Candidate Benefit |
 | :--- | :--- | :--- | :--- |
@@ -135,7 +135,7 @@ The system continuously indexes, deduplicates, and standardizes job postings fro
   11. `Tailored Cover Letter / Context` (Page Body Markdown)
 
 ### 5.5 Module 5: Application Copilot & Assistive Execution
-To adhere to recruiter-friendly standards, the engine categorizes approved jobs into two respectful application modes:
+The engine categorizes approved jobs into two respectful application modes:
 
 1. **Standardized Single-Step Portals (e.g., Simple JobThai/JobsDB Easy Submissions):**
    * Pre-fills verified contact details, resume uploads, and answers.
@@ -162,7 +162,7 @@ To adhere to recruiter-friendly standards, the engine categorizes approved jobs 
 
 ## 7. Security, Privacy & Repository Hygiene
 
-To ensure the repository is completely safe for public hosting and serves as an asset during recruiter technical reviews:
+To ensure the repository is completely safe for public hosting and follows clean engineering standards:
 
 * **Strict Credential Segregation:**
   * Zero credentials or API keys stored in Git.
